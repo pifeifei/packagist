@@ -14,18 +14,20 @@ services:
   - redis-server
   - mysql
 
-
 php:
-  - 7.3
+  - 7.4
 
 matrix:
   fast_finish: true
 
-before_script:
-    - cp app/config/parameters.yml.dist app/config/parameters.yml
-    - 'echo "    github.client_id: $GH_CLIENT_ID" >> app/config/parameters.yml'
-    - 'echo "    github.client_secret: $GH_CLIENT_SECRET" >> app/config/parameters.yml'
+before_install:
+    - 'echo "APP_GITHUB_CLIENT_ID=$GH_CLIENT_ID" >> .env.local'
+    - 'echo "APP_GITHUB_CLIENT_SECRET=$GH_CLIENT_SECRET" >> .env.local'
+
+install:
     - composer install
+
+before_script:
     - app/console doctrine:database:create --env=test -n
     - app/console doctrine:schema:create --env=test -n
 
